@@ -1,14 +1,6 @@
-# Orumoba
-テーマは「オルモビリティで変わる、コンパクトな未来」
-
-何を、どうするのか？
-私たちは、折り紙のように折り畳んでコンパクトに収納できる新しいモビリティ「オルモビリティ」を提案します。このオルモビリティは、動力源をレンタルできるシステムを採用し、本体は折り畳んで持ち運び可能にすることで、誰もが手軽に利用できることを目指しています。
-
-なぜ、この企画なのか？
-都市部の駐車場不足や交通渋滞は、深刻な社会問題となっています。オルモビリティは、折り畳めばコンパクトになるため、駐車場の必要性が大幅に減り、都市部のスペースを有効活用できます。
-
-未来の生活はこう変わる
-折りたたみ式のオルモビリティが普及すれば、都市部の移動手段は大きく変化します。例えば、どんなに駐車場が混んでいても、駐車場が無かったとしても、目的地まではオルモビリティで行き、着いたら畳むといったシームレスな移動が可能になります。
+# Nectar
+An android ecommerce application for groceries consuming the [Fruity API](https://github.com/kelvinbush/Fruity-S). Using
+Jetpack compose, authentication with jwt and clean architecture.
 
 
 ### User stories
@@ -22,7 +14,12 @@
 ### The final app screens:
 
 <div align="center">
-
+<img src="images/1.png" width="20%" style="object-fit:contain;"/>
+<img src="images/2.png" width="20%"/> 
+<img src="images/3.png" width="20%"/> 
+<img src="images/4.png" width="20%"/>
+<img src="images/5.png" width="20%"/> 
+<img src="images/6.png" width="20%"/> 
 </div>
 
 
