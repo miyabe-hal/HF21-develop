@@ -1,0 +1,27 @@
+name: Build, Upload Apk
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+    build:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+        - name: Setup JDK
+          uses: actions/setup-java@v1
+          with:
+            java-version: 11
+        - name: Putting data
+          env:
+            DATA: ${{ secrets.GOOGLE_JSON }}
+          run: echo $DATA > app/google-services.json
+        - name: Gradle Build
+          run: ./gradlew build --stacktrace
+        - name: Upload APK
+          uses: actions/upload-artifact@v2.3.1
+          with:
+            name: app
+            path: app/build/outputs/apk/debug/app-debug.apk

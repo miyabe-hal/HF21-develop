@@ -1,0 +1,48 @@
+buildscript {
+    ext {
+        // 最新の安定版を使用するように統一
+        compose_version = '1.5.0'  // 例: Composeのバージョンを最新安定版に更新
+        accompanist_version = '0.25.0'  // 最新バージョンに統一
+        nav = '2.6.0'  // Navigationのバージョンを最新安定版に統一
+        retrofit_version = '2.9.0'  // Retrofitのバージョンはそのまま
+        hilt_version = '2.45'  // Hiltのバージョンを最新安定版に統一
+        moshi_version = '1.15.0'  // Moshiのバージョンを最新安定版に統一
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.1'  // 最新安定版
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"  // Kotlinバージョンを1.8.10に統一
+        classpath "com.google.dagger:hilt-android-gradle-plugin:$hilt_version"
+        classpath 'com.google.gms:google-services:4.3.10'  // Googleサービスのバージョンはそのまま
+        classpath "org.jetbrains.kotlin:kotlin-serialization:1.7.20"  // Kotlinのserializationプラグインも最新バージョンに統一
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+// Kotlinコンパイラオプションの設定を追加
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "1.7"  // jvmTargetを1.8に設定（または "11" に変更）
+    }
+}
+
+// Add the following block to pass JVM arguments to JavaCompile tasks
+tasks.withType(JavaCompile) {
+    options.forkOptions.jvmArgs += [
+            '--add-exports', 'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
+    ]
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'mapDebugSourceSetPaths') {
+        task.dependsOn ':app:processDebugGoogleServices'
+    }
+}
