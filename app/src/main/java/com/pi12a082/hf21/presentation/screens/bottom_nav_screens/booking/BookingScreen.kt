@@ -1,4 +1,4 @@
-package com.pi12a082.hf21.presentation.screens.bottom_nav_screens.shop
+package com.pi12a082.hf21.presentation.screens.bottom_nav_screens.booking
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,9 +28,9 @@ import androidx.compose.ui.graphics.Color
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
-fun ShopScreen(
+fun BookingScreen(
     navController: NavHostController, // ナビゲーションコントローラー
-    shopViewModel: ShopViewModel = hiltViewModel(), // ShopViewModelをHiltでインジェクト
+    bookingViewModel: BookingViewModel = hiltViewModel(), // ShopViewModelをHiltでインジェクト
 ) {
     // 仮のデータを作成
     val products = listOf(
@@ -43,6 +43,15 @@ fun ShopScreen(
     // 検索キーワードの状態
     var searchItem by remember { mutableStateOf("") }
 
+    // 場所の入力状態
+    var location by remember { mutableStateOf("") }
+
+    // 日時の選択状態
+    var selectedDate by remember { mutableStateOf("") }
+
+    // プランの選択状態
+    var selectedPlan by remember { mutableStateOf("Plan A") }
+
     // UIの構築
     Column(
         horizontalAlignment = Alignment.CenterHorizontally, // 中央揃え
@@ -53,6 +62,56 @@ fun ShopScreen(
 
         // 検索用のテキストフィールド
         SearchTextField(searchItem = searchItem, changeEvent = { searchItem = it })
+
+        // 場所の入力フォーム
+        TextField(
+            value = location,
+            onValueChange = { location = it },
+            label = { Text("場所") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+
+        // 日時の入力フォーム
+        TextField(
+            value = selectedDate,
+            onValueChange = { selectedDate = it },
+            label = { Text("日時") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            readOnly = true,
+            enabled = true // 日時選択ボタンを有効にする
+        )
+
+        // プランの選択フォーム
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp)
+        ) {
+            Text("プランの選択", style = MaterialTheme.typography.h6)
+            Row {
+                RadioButton(
+                    selected = selectedPlan == "Plan A",
+                    onClick = { selectedPlan = "Plan A" }
+                )
+                Text("プランA", modifier = Modifier.align(Alignment.CenterVertically))
+            }
+            Row {
+                RadioButton(
+                    selected = selectedPlan == "Plan B",
+                    onClick = { selectedPlan = "Plan B" }
+                )
+                Text("プランB", modifier = Modifier.align(Alignment.CenterVertically))
+            }
+            Row {
+                RadioButton(
+                    selected = selectedPlan == "Plan C",
+                    onClick = { selectedPlan = "Plan C" }
+                )
+                Text("プランC", modifier = Modifier.align(Alignment.CenterVertically))
+            }
+        }
 
         // 商品リストの表示 (LazyColumn)
         Box(
@@ -125,8 +184,6 @@ fun ShopScreen(
                 onClick = {
                     // 予約画面に遷移
                     // navigateToReservationScreen() のように遷移処理を追加
-                    // 予約画面に遷移
-                    navController.navigate("booking_screen") // BookingScreenに遷移
                 },
                 colors = ButtonDefaults.buttonColors(
                     backgroundColor = Color(0xFFF2F3F2), // 背景色を設定

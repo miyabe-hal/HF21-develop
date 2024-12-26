@@ -18,6 +18,8 @@ sealed class Screen(
     object Start : Screen("get_started_screen")
 
     object Shop : Screen("shop", R.string.shop, R.drawable.shop)
+
+    object Booking : Screen("booking_screen", R.string.booking, R.drawable.explore)  // 追加
     object Explore : Screen("explore", R.string.explore, R.drawable.explore)
     object Cart : Screen("cart", R.string.cart, R.drawable.cart)
     object Favourite : Screen("favourite", R.string.favourite, R.drawable.outline_favorite_border)

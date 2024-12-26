@@ -5,8 +5,24 @@
       <entry key="PreviewLoginScreen">
         <State />
       </entry>
-      <entry key="app">
+      <entry key="SchedulePickupScreenPreview">
         <State />
+      </entry>
+      <entry key="app">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\miyabe\.android\avd\Pixel_5_API_34.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-12-21T11:01:31.354939Z" />
+        </State>
       </entry>
     </value>
   </component>

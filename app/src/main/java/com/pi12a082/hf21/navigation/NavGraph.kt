@@ -39,6 +39,8 @@ import com.pi12a082.hf21.presentation.screens.welcome.GetStartedScreen
 import com.pi12a082.hf21.presentation.screens.welcome.OnBoardingScreen
 import com.pi12a082.hf21.util.Constants.DETAIL_ARGUMENT_KEY
 
+import com.pi12a082.hf21.presentation.screens.bottom_nav_screens.booking.BookingScreen
+
 @ExperimentalCoilApi
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
@@ -53,6 +55,11 @@ fun SetUpNavGraph(navController: NavHostController) {
             composable(route = Screen.Login.route) { LoginScreen(navController = navController) }
             composable(route = Screen.Welcome.route) { OnBoardingScreen(navController = navController) }
             composable(route = Screen.Shop.route) { ShopScreen(navController) }
+            composable(route = Screen.Booking.route) { BookingScreen(navController) }
+            // 追加: booking_screen のルートもNavHostに追加
+//            composable(route = Screen.Booking.route) {
+//                BookingScreen(navController = navController)
+//            }
             composable(route = Screen.Explore.route) { ExploreScreen() }
             composable(route = Screen.Cart.route) { MyCart(navController) }
             composable(route = Screen.Favourite.route) { FavouriteScreen() }
@@ -79,10 +86,11 @@ fun SetUpNavGraph(navController: NavHostController) {
 fun MyBottomNav(navController: NavHostController) {
     val bottomItems = listOf(
         Screen.Shop,
+        Screen.Booking, // ここにBookingScreenを追加
         Screen.Explore,
         Screen.Cart,
         Screen.Favourite,
-        Screen.Account
+        Screen.Account,
     )
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -134,3 +142,9 @@ fun MyBottomNav(navController: NavHostController) {
         Spacer(modifier = Modifier.width(0.dp))
     }
 }
+
+//@Composable
+//fun BookingScreen(navController: NavHostController) {
+//    // 予約画面のUIを実装
+//    Text(text = "予約画面")
+//}

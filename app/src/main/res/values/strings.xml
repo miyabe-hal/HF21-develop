@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Fruity</string>
     <string name="shop">Shop</string>
+    <string name="booking">Book</string>
     <string name="explore">Explore</string>
-    <string name="account">Account</string>
+    <string name="account">User</string>
     <string name="cart">Cart</string>
     <string name="favourite">Liked</string>
     <string name="cart_item">cart item</string>
