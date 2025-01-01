@@ -24,22 +24,15 @@ import com.pi12a082.hf21.presentation.components.CategoryComponent
 import com.pi12a082.hf21.presentation.components.SearchTextField
 import com.pi12a082.hf21.presentation.components.ShopHeaderComponent
 import androidx.compose.ui.graphics.Color
+//import com.kelvinbush.nectar.R
 
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
 @Composable
 fun BookingScreen(
     navController: NavHostController, // ナビゲーションコントローラー
-    bookingViewModel: BookingViewModel = hiltViewModel(), // ShopViewModelをHiltでインジェクト
+    bookingViewModel: BookingViewModel = hiltViewModel() // ShopViewModelをHiltでインジェクト
 ) {
-    // 仮のデータを作成
-    val products = listOf(
-        Product("Apple", "Fruit", "Fresh apple", R.drawable.apple_image),
-        Product("Banana", "Fruit", "Ripe banana", R.drawable.banana_image),
-        Product("Laptop", "Electronics", "Powerful laptop", R.drawable.laptop_image),
-        Product("Headphones", "Electronics", "Noise-canceling headphones", R.drawable.headphones_image)
-    )
-
     // 検索キーワードの状態
     var searchItem by remember { mutableStateOf("") }
 
@@ -54,8 +47,8 @@ fun BookingScreen(
 
     // UIの構築
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally, // 中央揃え
-        modifier = Modifier.fillMaxSize() // 画面全体を占める
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
     ) {
         // ショップのヘッダーコンポーネント
         ShopHeaderComponent()
@@ -63,182 +56,506 @@ fun BookingScreen(
         // 検索用のテキストフィールド
         SearchTextField(searchItem = searchItem, changeEvent = { searchItem = it })
 
-        // 場所の入力フォーム
-        TextField(
-            value = location,
-            onValueChange = { location = it },
-            label = { Text("場所") },
+        // スクロール可能なフォーム
+        LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-        )
-
-        // 日時の入力フォーム
-        TextField(
-            value = selectedDate,
-            onValueChange = { selectedDate = it },
-            label = { Text("日時") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            readOnly = true,
-            enabled = true // 日時選択ボタンを有効にする
-        )
-
-        // プランの選択フォーム
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(16.dp)
+                .weight(1f) // スクロール領域を拡大
         ) {
-            Text("プランの選択", style = MaterialTheme.typography.h6)
-            Row {
-                RadioButton(
-                    selected = selectedPlan == "Plan A",
-                    onClick = { selectedPlan = "Plan A" }
-                )
-                Text("プランA", modifier = Modifier.align(Alignment.CenterVertically))
-            }
-            Row {
-                RadioButton(
-                    selected = selectedPlan == "Plan B",
-                    onClick = { selectedPlan = "Plan B" }
-                )
-                Text("プランB", modifier = Modifier.align(Alignment.CenterVertically))
-            }
-            Row {
-                RadioButton(
-                    selected = selectedPlan == "Plan C",
-                    onClick = { selectedPlan = "Plan C" }
-                )
-                Text("プランC", modifier = Modifier.align(Alignment.CenterVertically))
-            }
-        }
-
-        // 商品リストの表示 (LazyColumn)
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth() // 横幅いっぱいに
-                    .padding(start = 16.dp) // 左側にパディング
-                    .fillMaxHeight(0.9f) // 高さを画面の90%に設定
-            ) {
-                // カルーセル画像の表示 (仮の画像)
-                item {
-                    Image(
-                        painter = painterResource(id = R.drawable.carousel_origami), // 画像リソース
-                        contentDescription = null, // コンテンツ説明はなし
-                        modifier = Modifier
-                            .fillMaxWidth() // 横幅いっぱいに
-                            .padding(vertical = 8.dp, horizontal = 16.dp), // 余白の設定
-                        contentScale = ContentScale.FillBounds // 画像をボックスに合わせて拡大縮小
-                    )
-                }
-
-                // 各カテゴリごとに商品を表示
-                val categories = products.map { it.category }.distinct()
-
-                categories.forEach { category ->
-                    item {
-                        // カテゴリーに属する商品を表示
-                        val categoryProducts = products.filter { it.category == category }
-
-                        CategoryComponent(
-                            category = category, // カテゴリー名
-                            products = categoryProducts, // 商品リスト
-                            addItem = {}, // アイテム追加時のアクション（現在は未実装）
-                            navigateToDetail = { product ->
-                                // 詳細画面にナビゲートする処理（仮）
-                            }
-                        )
-                    }
-                }
-            }
-
-            // エラーメッセージの表示（仮のエラーメッセージ）
-            val error = "エラーが発生しました"
-            if (error.isNotBlank()) {
-//                Text(
-//                    text = error, // エラーメッセージ
-//                    color = MaterialTheme.colors.error, // エラーカラー
-//                    textAlign = TextAlign.Center, // 中央揃え
-//                    modifier = Modifier
-//                        .fillMaxWidth() // 横幅いっぱいに
-//                        .padding(horizontal = 20.dp) // 余白
-//                        .align(Alignment.Center) // 中央に配置
-//                )
-            }
-
-            // ローディングインジケーターの表示（仮）
-            val isLoading = false
-            if (isLoading) {
-                CircularProgressIndicator(
+            item {
+                // 場所の入力フォーム
+                TextField(
+                    value = location,
+                    onValueChange = { location = it },
+                    label = { Text("場所") },
                     modifier = Modifier
-                        .align(Alignment.Center) // 中央に配置
-                        .padding(32.dp)
-                ) // 余白
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                )
             }
 
-            // 予約するボタンを画面下部に1つ表示
-            Button(
-                onClick = {
-                    // 予約画面に遷移
-                    // navigateToReservationScreen() のように遷移処理を追加
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color(0xFFF2F3F2), // 背景色を設定
-                    contentColor = Color(0xFF53B175)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth() // ボタンが画面いっぱいに広がる
-                    .padding(horizontal = 16.dp) // 左右のパディング
-                    .padding(top = 500.dp) // ボタンと画面下部の余白
-            ) {
-                Text(
-                    text = "予約する",
-                    color = MaterialTheme.colors.primary, // ボタン内の文字色（任意）
-                    style = MaterialTheme.typography.button // 文字スタイル（任意）
+            item {
+                // 日時の入力フォーム
+                TextField(
+                    value = selectedDate,
+                    onValueChange = { selectedDate = it },
+                    label = { Text("日時") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    readOnly = true,
+                    enabled = true // 日時選択ボタンを有効にする
                 )
+            }
+
+            item {
+                // 料金プランの選択フォーム
+                Column(
+                    modifier = Modifier.fillMaxWidth().padding(16.dp)
+                ) {
+                    Text("料金プランの選択", style = MaterialTheme.typography.h6)
+
+                    // 各プランの選択肢
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedPlan == "6時間貸出パック",
+                            onClick = { selectedPlan = "6時間貸出パック" }
+                        )
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text("6時間貸出パック", modifier = Modifier.align(Alignment.Start))
+                            Image(
+                                painter = painterResource(id = R.drawable.coke), // 6時間貸出パックの画像
+                                contentDescription = "6時間貸出パック",
+                                modifier = Modifier.size(40.dp) // アイコンサイズ
+                            )
+                            Text("1,000円（税込）", modifier = Modifier.align(Alignment.Start))
+                            Text(
+                                text = "お手軽に日常使い、ちょっとしたお出かけにぴったり！",
+                                style = MaterialTheme.typography.body2
+                            )
+                        }
+                    }
+
+                    // 他のプラン（同様に表示）
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedPlan == "1日貸出パック",
+                            onClick = { selectedPlan = "1日貸出パック" }
+                        )
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text("1日貸出パック", modifier = Modifier.align(Alignment.Start))
+                            Image(
+                                painter = painterResource(id = R.drawable.apple_image), // 1日貸出パックの画像
+                                contentDescription = "1日貸出パック",
+                                modifier = Modifier.size(40.dp) // アイコンサイズ
+                            )
+                            Text("2,000円（税込）", modifier = Modifier.align(Alignment.Start))
+                            Text(
+                                text = "1日の冒険をバッテリーと共に！お出かけ全力サポート",
+                                style = MaterialTheme.typography.body2
+                            )
+                        }
+                    }
+
+                    // 5日間貸出パック
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = selectedPlan == "5日間貸出パック",
+                            onClick = { selectedPlan = "5日間貸出パック" }
+                        )
+                        Column(modifier = Modifier.padding(start = 8.dp)) {
+                            Text("5日間貸出パック", modifier = Modifier.align(Alignment.Start))
+                            Image(
+                                painter = painterResource(id = R.drawable.banana_image), // 5日間貸出パックの画像
+                                contentDescription = "5日間貸出パック",
+                                modifier = Modifier.size(40.dp) // アイコンサイズ
+                            )
+                            Text("8,000円（税込）", modifier = Modifier.align(Alignment.Start))
+                            Text(
+                                text = "旅行や出張に最適！長期間使える充実プラン",
+                                style = MaterialTheme.typography.body2
+                            )
+                        }
+                    }
+                }
             }
         }
 
-
-    }
-}
-
-@Composable
-fun CategoryComponent(
-    category: String,
-    products: List<Product>, // 型をProductに変更
-    addItem: (id: String) -> Unit,
-    navigateToDetail: (Product) -> Unit
-) {
-    // カテゴリー内の商品を表示する処理
-    Column {
-        Text(
-            text = category,
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        products.forEach { product ->
+        // 予約するボタンを画面下部に1つ表示
+        Button(
+            onClick = {
+                // 予約画面に遷移
+            },
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFFF2F3F2), // 背景色を設定
+                contentColor = Color(0xFF53B175)
+            ),
+            modifier = Modifier
+                .fillMaxWidth() // ボタンが画面いっぱいに広がる
+                .padding(horizontal = 16.dp) // 左右のパディング
+//                .align(Alignment.BottomCenter) // 画面下部に配置
+        ) {
             Text(
-                text = product.name,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clickable {
-                        navigateToDetail(product) // 詳細画面に遷移する
-                    }
+                text = "予約する",
+                color = MaterialTheme.colors.primary, // ボタン内の文字色（任意）
+                style = MaterialTheme.typography.button // 文字スタイル（任意）
             )
         }
     }
 }
 
-data class Product(
-    val name: String,
-    val category: String,
-    val description: String,
-    val imageResource: Int // 画像リソースID
-)
+//@ExperimentalMaterialApi
+//@ExperimentalCoilApi
+//@Composable
+//fun BookingScreen(
+//    navController: NavHostController, // ナビゲーションコントローラー
+//    bookingViewModel: BookingViewModel = hiltViewModel() // ShopViewModelをHiltでインジェクト
+//) {
+//    // 検索キーワードの状態
+//    var searchItem by remember { mutableStateOf("") }
+//
+//    // 場所の入力状態
+//    var location by remember { mutableStateOf("") }
+//
+//    // 日時の選択状態
+//    var selectedDate by remember { mutableStateOf("") }
+//
+//    // プランの選択状態
+//    var selectedPlan by remember { mutableStateOf("Plan A") }
+//
+//    // UIの構築
+//    Column(
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        modifier = Modifier.fillMaxSize()
+//    ) {
+//        // ショップのヘッダーコンポーネント
+//        ShopHeaderComponent()
+//
+//        // 検索用のテキストフィールド
+//        SearchTextField(searchItem = searchItem, changeEvent = { searchItem = it })
+//
+//        // 場所の入力フォーム
+//        TextField(
+//            value = location,
+//            onValueChange = { location = it },
+//            label = { Text("場所") },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp)
+//        )
+//
+//        // 日時の入力フォーム
+//        TextField(
+//            value = selectedDate,
+//            onValueChange = { selectedDate = it },
+//            label = { Text("日時") },
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(16.dp),
+//            readOnly = true,
+//            enabled = true // 日時選択ボタンを有効にする
+//        )
+//
+//        // プランの選択フォーム
+//        Column(
+//            modifier = Modifier.fillMaxWidth().padding(16.dp)
+//        ) {
+//            Text("料金プランの選択", style = MaterialTheme.typography.h6)
+//
+//            // 各プランの選択肢
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                RadioButton(
+//                    selected = selectedPlan == "6時間貸出パック",
+//                    onClick = { selectedPlan = "6時間貸出パック" }
+//                )
+//                Column(modifier = Modifier.padding(start = 8.dp)) {
+//                    Text("6時間貸出パック", modifier = Modifier.align(Alignment.Start))
+//                    Image(
+//                        painter = painterResource(id = R.drawable.coke), // 6時間貸出パックの画像
+//                        contentDescription = "6時間貸出パック",
+//                        modifier = Modifier.size(40.dp) // アイコンサイズ
+//                    )
+//                    Text(
+//                        text = "お手軽に日常使い、ちょっとしたお出かけにぴったり！",
+//                        style = MaterialTheme.typography.body2
+//                    )
+//                }
+//            }
+////@Composable
+////fun BookingScreen(
+////    navController: NavHostController, // ナビゲーションコントローラー
+////    bookingViewModel: BookingViewModel = hiltViewModel(), // ShopViewModelをHiltでインジェクト
+////) {
+////    // 仮のデータを作成
+////    val products = listOf(
+////        Product("Apple", "Fruit", "Fresh apple", R.drawable.apple_image),
+////        Product("Banana", "Fruit", "Ripe banana", R.drawable.banana_image),
+////        Product("Laptop", "Electronics", "Powerful laptop", R.drawable.laptop_image),
+////        Product("Headphones", "Electronics", "Noise-canceling headphones", R.drawable.headphones_image)
+////    )
+////
+////    // 検索キーワードの状態
+////    var searchItem by remember { mutableStateOf("") }
+////
+////    // 場所の入力状態
+////    var location by remember { mutableStateOf("") }
+////
+////    // 日時の選択状態
+////    var selectedDate by remember { mutableStateOf("") }
+////
+////    // プランの選択状態
+////    var selectedPlan by remember { mutableStateOf("Plan A") }
+////
+////    // UIの構築
+////    Column(
+////        horizontalAlignment = Alignment.CenterHorizontally, // 中央揃え
+////        modifier = Modifier.fillMaxSize() // 画面全体を占める
+////    ) {
+////        // ショップのヘッダーコンポーネント
+////        ShopHeaderComponent()
+////
+////        // 検索用のテキストフィールド
+////        SearchTextField(searchItem = searchItem, changeEvent = { searchItem = it })
+////
+////        // 場所の入力フォーム
+////        TextField(
+////            value = location,
+////            onValueChange = { location = it },
+////            label = { Text("場所") },
+////            modifier = Modifier
+////                .fillMaxWidth()
+////                .padding(16.dp)
+////        )
+////
+////        // 日時の入力フォーム
+////        TextField(
+////            value = selectedDate,
+////            onValueChange = { selectedDate = it },
+////            label = { Text("日時") },
+////            modifier = Modifier
+////                .fillMaxWidth()
+////                .padding(16.dp),
+////            readOnly = true,
+////            enabled = true // 日時選択ボタンを有効にする
+////        )
+////
+////        // プランの選択フォーム
+////        // プランの選択フォーム
+////        Column(
+////            modifier = Modifier.fillMaxWidth().padding(16.dp)
+////        ) {
+////            Text("料金プランの選択", style = MaterialTheme.typography.h6)
+////
+////            // 6時間貸出パック
+////            Row(
+////                verticalAlignment = Alignment.CenterVertically
+////            ) {
+////                RadioButton(
+////                    selected = selectedPlan == "6時間貸出パック",
+////                    onClick = { selectedPlan = "6時間貸出パック" }
+////                )
+////                Column(modifier = Modifier.padding(start = 8.dp)) {
+////                    Text("6時間貸出パック", modifier = Modifier.align(Alignment.Start))
+////                    Image(
+////                        painter = painterResource(id = R.drawable.coke), // 6時間貸出パックの画像
+////                        contentDescription = "6時間貸出パック",
+////                        modifier = Modifier.size(40.dp) // アイコンサイズ
+////                    )
+////                    Text(
+////                        text = "お手軽に日常使い、ちょっとしたお出かけにぴったり！",
+////                        style = MaterialTheme.typography.body2
+////                    )
+////                }
+////            }
+//
+//            // 1日貸出パック
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                RadioButton(
+//                    selected = selectedPlan == "1日貸出パック",
+//                    onClick = { selectedPlan = "1日貸出パック" }
+//                )
+//                Column(modifier = Modifier.padding(start = 8.dp)) {
+//                    Text("1日貸出パック", modifier = Modifier.align(Alignment.Start))
+//                    Image(
+//                        painter = painterResource(id = R.drawable.apple_image), // 1日貸出パックの画像
+//                        contentDescription = "1日貸出パック",
+//                        modifier = Modifier.size(40.dp) // アイコンサイズ
+//                    )
+//                    Text(
+//                        text = "1日の冒険をバッテリーと共に！お出かけ全力サポート",
+//                        style = MaterialTheme.typography.body2
+//                    )
+//                }
+//            }
+//
+//            // 5日間貸出パック
+//            Row(
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                RadioButton(
+//                    selected = selectedPlan == "5日間貸出パック",
+//                    onClick = { selectedPlan = "5日間貸出パック" }
+//                )
+//                Column(modifier = Modifier.padding(start = 8.dp)) {
+//                    Text("5日間貸出パック", modifier = Modifier.align(Alignment.Start))
+//                    Image(
+//                        painter = painterResource(id = R.drawable.banana_image), // 5日間貸出パックの画像
+//                        contentDescription = "5日間貸出パック",
+//                        modifier = Modifier.size(40.dp) // アイコンサイズ
+//                    )
+//                    Text(
+//                        text = "旅行や出張に最適！長期間使える充実プラン",
+//                        style = MaterialTheme.typography.body2
+//                    )
+//                }
+//            }
+//        }
+//
+////        Column(
+////            modifier = Modifier.fillMaxWidth().padding(16.dp)
+////        ) {
+////            Text("料金プランの選択", style = MaterialTheme.typography.h6)
+////            Row {
+////                RadioButton(
+////                    selected = selectedPlan == "Plan A",
+////                    onClick = { selectedPlan = "Plan A" }
+////                )
+////                Text("プランA", modifier = Modifier.align(Alignment.CenterVertically))
+////            }
+////            Row {
+////                RadioButton(
+////                    selected = selectedPlan == "Plan B",
+////                    onClick = { selectedPlan = "Plan B" }
+////                )
+////                Text("プランB", modifier = Modifier.align(Alignment.CenterVertically))
+////            }
+////            Row {
+////                RadioButton(
+////                    selected = selectedPlan == "Plan C",
+////                    onClick = { selectedPlan = "Plan C" }
+////                )
+////                Text("プランC", modifier = Modifier.align(Alignment.CenterVertically))
+////            }
+//        }
+//
+//
+//
+//        // 商品リストの表示 (LazyColumn)
+//        Box(
+//            modifier = Modifier.fillMaxSize()
+//        ) {
+//            LazyColumn(
+//                modifier = Modifier
+//                    .fillMaxWidth() // 横幅いっぱいに
+//                    .padding(start = 16.dp) // 左側にパディング
+//                    .fillMaxHeight(0.9f) // 高さを画面の90%に設定
+//            ) {
+//                // カルーセル画像の表示 (仮の画像)
+////                item {
+////                    Image(
+////                        painter = painterResource(id = R.drawable.carousel_origami), // 画像リソース
+////                        contentDescription = null, // コンテンツ説明はなし
+////                        modifier = Modifier
+////                            .fillMaxWidth() // 横幅いっぱいに
+////                            .padding(vertical = 8.dp, horizontal = 16.dp), // 余白の設定
+////                        contentScale = ContentScale.FillBounds // 画像をボックスに合わせて拡大縮小
+////                    )
+////                }
+//
+//                // 各カテゴリごとに商品を表示
+////                val categories = products.map { it.category }.distinct()
+////
+////                categories.forEach { category ->
+////                    item {
+////                        // カテゴリーに属する商品を表示
+////                        val categoryProducts = products.filter { it.category == category }
+////
+////                        CategoryComponent(
+////                            category = category, // カテゴリー名
+////                            products = categoryProducts, // 商品リスト
+////                            addItem = {}, // アイテム追加時のアクション（現在は未実装）
+////                            navigateToDetail = { product ->
+////                                // 詳細画面にナビゲートする処理（仮）
+////                            }
+////                        )
+////                    }
+////                }
+//            }
+//
+//            // エラーメッセージの表示（仮のエラーメッセージ）
+//            val error = "エラーが発生しました"
+//            if (error.isNotBlank()) {
+////                Text(
+////                    text = error, // エラーメッセージ
+////                    color = MaterialTheme.colors.error, // エラーカラー
+////                    textAlign = TextAlign.Center, // 中央揃え
+////                    modifier = Modifier
+////                        .fillMaxWidth() // 横幅いっぱいに
+////                        .padding(horizontal = 20.dp) // 余白
+////                        .align(Alignment.Center) // 中央に配置
+////                )
+//            }
+//
+//            // ローディングインジケーターの表示（仮）
+//            val isLoading = false
+//            if (isLoading) {
+//                CircularProgressIndicator(
+//                    modifier = Modifier
+//                        .align(Alignment.Center) // 中央に配置
+//                        .padding(32.dp)
+//                ) // 余白
+//            }
+//
+//            // 予約するボタンを画面下部に1つ表示
+//            Button(
+//                onClick = {
+//                    // 予約画面に遷移
+//                    // navigateToReservationScreen() のように遷移処理を追加
+//                },
+//                colors = ButtonDefaults.buttonColors(
+//                    backgroundColor = Color(0xFFF2F3F2), // 背景色を設定
+//                    contentColor = Color(0xFF53B175)
+//                ),
+//                modifier = Modifier
+//                    .fillMaxWidth() // ボタンが画面いっぱいに広がる
+//                    .padding(horizontal = 16.dp) // 左右のパディング
+//                    .align(Alignment.BottomCenter) // 画面下部に配置
+//            ) {
+//                Text(
+//                    text = "予約する",
+//                    color = MaterialTheme.colors.primary, // ボタン内の文字色（任意）
+//                    style = MaterialTheme.typography.button // 文字スタイル（任意）
+//                )
+//            }
+//        }
+//
+//
+//
+//}
+//
+//@Composable
+//fun CategoryComponent(
+//    category: String,
+//    products: List<Product>, // 型をProductに変更
+//    addItem: (id: String) -> Unit,
+//    navigateToDetail: (Product) -> Unit
+//) {
+//    // カテゴリー内の商品を表示する処理
+//    Column {
+//        Text(
+//            text = category,
+//            style = MaterialTheme.typography.h6,
+//            modifier = Modifier.padding(vertical = 8.dp)
+//        )
+//        products.forEach { product ->
+//            Text(
+//                text = product.name,
+//                modifier = Modifier
+//                    .padding(8.dp)
+//                    .clickable {
+//                        navigateToDetail(product) // 詳細画面に遷移する
+//                    }
+//            )
+//        }
+//    }
+//}
+//
+//data class Product(
+//    val name: String,
+//    val category: String,
+//    val description: String,
+//    val imageResource: Int // 画像リソースID
+//)
 
 
 //package com.pi12a082.hf21.presentation.screens.bottom_nav_screens.shop
