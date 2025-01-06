@@ -54,6 +54,8 @@ fun ShopScreen(
         // 検索用のテキストフィールド
         SearchTextField(searchItem = searchItem, changeEvent = { searchItem = it })
 
+
+
         // 商品リストの表示 (LazyColumn)
         Box(
             modifier = Modifier.fillMaxSize()
@@ -64,8 +66,45 @@ fun ShopScreen(
                     .padding(start = 16.dp) // 左側にパディング
                     .fillMaxHeight(0.9f) // 高さを画面の90%に設定
             ) {
-                // カルーセル画像の表示 (仮の画像)
                 item {
+                // タイトル表示
+                Text(
+                    text = "Orumobi", // タイトル
+                    style = MaterialTheme.typography.h4,
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .padding(bottom = 16.dp), // 上下のパディング
+                    color = MaterialTheme.colors.primary
+                )
+
+                // 画像表示
+                Image(
+                    painter = painterResource(id = R.drawable.origami_car_top), // 画像リソース
+                    contentDescription = "Orumobi image", // コンテンツ説明
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp), // 横のパディング
+                    contentScale = ContentScale.FillWidth // 画像を横幅いっぱいに表示
+                )
+
+                // 説明文表示
+                Text(
+                    text = "私たちのテーマは「オルモビリティで変わる、コンパクトな未来」です。\n\n" +
+                            "何を、どうするのか？ 私たちは、折り紙のように折り畳んでコンパクトに収納できる新しいモビリティ「オルモビリティ」を提案します。" +
+                            "このオルモビリティは、動力源をレンタルできるシステムを採用し、本体は折り畳んで持ち運び可能にすることで、誰もが手軽に利用できることを目指しています。\n\n" +
+                            "なぜ、この企画なのか？ 都市部の駐車場不足や交通渋滞は、深刻な社会問題となっています。" +
+                            "オルモビリティは、折り畳めばコンパクトになるため、駐車場の必要性が大幅に減り、都市部のスペースを有効活用できます。\n\n" +
+                            "未来の生活はこう変わる 折りたたみ式のオルモビリティが普及すれば、都市部の移動手段は大きく変化します。" +
+                            "例えば、どんなに駐車場が混んでいても、駐車場が無かったとしても、目的地まではオルモビリティで行き、着いたら畳むといったシームレスな移動が可能になります。",
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Justify
+                )
+
+                // カルーセル画像の表示 (仮の画像)
+
                     Image(
                         painter = painterResource(id = R.drawable.carousel_origami), // 画像リソース
                         contentDescription = null, // コンテンツ説明はなし
@@ -79,21 +118,21 @@ fun ShopScreen(
                 // 各カテゴリごとに商品を表示
                 val categories = products.map { it.category }.distinct()
 
-                categories.forEach { category ->
-                    item {
-                        // カテゴリーに属する商品を表示
-                        val categoryProducts = products.filter { it.category == category }
-
-                        CategoryComponent(
-                            category = category, // カテゴリー名
-                            products = categoryProducts, // 商品リスト
-                            addItem = {}, // アイテム追加時のアクション（現在は未実装）
-                            navigateToDetail = { product ->
-                                // 詳細画面にナビゲートする処理（仮）
-                            }
-                        )
-                    }
-                }
+//                categories.forEach { category ->
+//                    item {
+//                        // カテゴリーに属する商品を表示
+//                        val categoryProducts = products.filter { it.category == category }
+//
+//                        CategoryComponent(
+//                            category = category, // カテゴリー名
+//                            products = categoryProducts, // 商品リスト
+//                            addItem = {}, // アイテム追加時のアクション（現在は未実装）
+//                            navigateToDetail = { product ->
+//                                // 詳細画面にナビゲートする処理（仮）
+//                            }
+//                        )
+//                    }
+//                }
             }
 
             // エラーメッセージの表示（仮のエラーメッセージ）

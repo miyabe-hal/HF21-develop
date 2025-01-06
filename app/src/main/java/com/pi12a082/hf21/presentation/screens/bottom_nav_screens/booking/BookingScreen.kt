@@ -110,7 +110,7 @@ fun BookingScreen(
                                 contentDescription = "6時間貸出パック",
                                 modifier = Modifier.size(40.dp) // アイコンサイズ
                             )
-                            Text("1,000円（税込）", modifier = Modifier.align(Alignment.Start))
+                            Text("1,100円（税込）", modifier = Modifier.align(Alignment.Start))
                             Text(
                                 text = "お手軽に日常使い、ちょっとしたお出かけにぴったり！",
                                 style = MaterialTheme.typography.body2
@@ -133,7 +133,7 @@ fun BookingScreen(
                                 contentDescription = "1日貸出パック",
                                 modifier = Modifier.size(40.dp) // アイコンサイズ
                             )
-                            Text("2,000円（税込）", modifier = Modifier.align(Alignment.Start))
+                            Text("2,200円（税込）", modifier = Modifier.align(Alignment.Start))
                             Text(
                                 text = "1日の冒険をバッテリーと共に！お出かけ全力サポート",
                                 style = MaterialTheme.typography.body2
@@ -156,7 +156,7 @@ fun BookingScreen(
                                 contentDescription = "5日間貸出パック",
                                 modifier = Modifier.size(40.dp) // アイコンサイズ
                             )
-                            Text("8,000円（税込）", modifier = Modifier.align(Alignment.Start))
+                            Text("8,800円（税込）", modifier = Modifier.align(Alignment.Start))
                             Text(
                                 text = "旅行や出張に最適！長期間使える充実プラン",
                                 style = MaterialTheme.typography.body2
