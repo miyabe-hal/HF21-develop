@@ -1,5 +1,6 @@
 package com.pi12a082.hf21.presentation.screens.bottom_nav_screens.booking
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -25,6 +26,14 @@ import com.pi12a082.hf21.presentation.components.SearchTextField
 import com.pi12a082.hf21.presentation.components.ShopHeaderComponent
 import androidx.compose.ui.graphics.Color
 //import com.kelvinbush.nectar.R
+import com.google.android.material.datepicker.MaterialDatePicker
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.ComponentActivity
+import java.util.Calendar
+import java.text.SimpleDateFormat
+import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
+import java.util.*
 
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
@@ -44,6 +53,51 @@ fun BookingScreen(
 
     // プランの選択状態
     var selectedPlan by remember { mutableStateOf("Plan A") }
+
+    // 日付選択のためのカレンダーダイアログ
+    val context = LocalContext.current
+
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    // 日付選択ダイアログを表示する関数
+    fun showDatePicker() {
+        val datePickerDialog = DatePickerDialog(
+            context,
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // 日付が選択された場合、選択した日付をフォーマットして表示
+                selectedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay"
+            },
+            year,
+            month,
+            day
+        )
+        datePickerDialog.show()
+    }
+
+    // MaterialDatePickerを使うための準備
+//    val context = LocalContext.current
+//    val datePicker = remember {
+//        MaterialDatePicker.Builder.datePicker()
+//            .setTitleText("日付を選択")
+//            .build()
+//    }
+//
+//    // 日付選択のためのカレンダーダイアログを表示する関数
+//    fun showDatePicker() {
+//        datePicker.addOnPositiveButtonClickListener { selection ->
+//            val sdf = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())
+//            selectedDate = sdf.format(Date(selection))
+//        }
+//
+//        // FragmentActivityへのキャスト
+//        val fragmentActivity = context as? FragmentActivity
+//        fragmentActivity?.let {
+//            datePicker.show(it.supportFragmentManager, "DATE_PICKER")
+//        }
+//    }
 
     // UIの構築
     Column(
@@ -75,6 +129,23 @@ fun BookingScreen(
             }
 
             item {
+                // 時計のアイコンを追加
+                IconButton(
+                    onClick = { showDatePicker() },
+//                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_access_time_24), // 時計のアイコンを指定
+                        contentDescription = "Clock",
+                        tint = Color.Black
+                    )
+                }// 「日時を選択する」テキスト
+                Text(
+                    text = "   日時を選択する",
+                    modifier = Modifier,
+//                        .padding(start = 4.dp),  // テキストとアイコンの間に少しスペースを追加
+                    color = Color.Black
+                )
                 // 日時の入力フォーム
                 TextField(
                     value = selectedDate,
@@ -82,9 +153,13 @@ fun BookingScreen(
                     label = { Text("日時") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    readOnly = true,
-                    enabled = true // 日時選択ボタンを有効にする
+                        .padding(16.dp)
+                        .clickable {
+                            // DatePickerDialogを表示
+                            showDatePicker()
+                        },
+                    readOnly = true, // ユーザーが手入力しないようにする
+                    enabled = true // ボタンを有効にする
                 )
             }
 

@@ -133,6 +133,7 @@ configurations.all {
     resolutionStrategy {
         force 'com.google.android.gms:play-services-auth:20.7.0'
         force 'com.google.firebase:firebase-auth-ktx:21.0.5'
+        force 'com.google.accompanist:accompanist-datepicker:0.24.13-rc' // 強制的にバージョンを指定
     }
 }
 
