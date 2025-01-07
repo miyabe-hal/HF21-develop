@@ -1,6 +1,7 @@
 package com.pi12a082.hf21.presentation.screens.bottom_nav_screens.booking
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -61,14 +62,33 @@ fun BookingScreen(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val hour = calendar.get(Calendar.HOUR_OF_DAY)
+    val minute = calendar.get(Calendar.MINUTE)
 
-    // 日付選択ダイアログを表示する関数
+    // 時間選択ダイアログを表示する関数
+    fun showTimePicker(selectedYear: Int, selectedMonth: Int, selectedDay: Int) {
+        val timePickerDialog = TimePickerDialog(
+            context,
+            { _, selectedHour, selectedMinute ->
+                // 分を2桁表示にフォーマット
+                val formattedMinute = String.format("%02d", selectedMinute)
+                // 時間と分を組み合わせて表示
+                selectedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay $selectedHour:$formattedMinute"
+            },
+            hour,
+            minute,
+            true // 24時間形式を使用
+        )
+        timePickerDialog.show()
+    }
+
+    // 日付選択のためのカレンダーダイアログ
     fun showDatePicker() {
         val datePickerDialog = DatePickerDialog(
             context,
             { _, selectedYear, selectedMonth, selectedDay ->
-                // 日付が選択された場合、選択した日付をフォーマットして表示
-                selectedDate = "$selectedYear/${selectedMonth + 1}/$selectedDay"
+                // 日付が選択された場合、時間選択ダイアログを呼び出す
+                showTimePicker(selectedYear, selectedMonth, selectedDay)
             },
             year,
             month,
