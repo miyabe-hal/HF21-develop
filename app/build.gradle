@@ -127,6 +127,9 @@ dependencies {
 
     // Kotlin standard library
     implementation "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"  // 最新バージョンに統一
+
+    implementation 'com.google.maps.android:maps-compose:2.6.0' // Google Maps Composeを追加
+    implementation 'com.google.android.gms:play-services-maps:17.0.1' // Maps SDK
 }
 
 configurations.all {

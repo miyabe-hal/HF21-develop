@@ -35,6 +35,18 @@ import java.text.SimpleDateFormat
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
 import java.util.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.Marker
+import com.google.maps.android.compose.rememberCameraPositionState
+import android.location.Geocoder
+import android.util.Log
 
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
@@ -55,8 +67,14 @@ fun BookingScreen(
     // プランの選択状態
     var selectedPlan by remember { mutableStateOf("Plan A") }
 
+    // 選択した位置の状態
+    var selectedLocation by remember { mutableStateOf<LatLng?>(null) }
+
     // 日付選択のためのカレンダーダイアログ
     val context = LocalContext.current
+
+    // 地図を表示するためのダイアログ表示の状態
+    var showMapDialog by remember { mutableStateOf(false) }
 
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -95,6 +113,22 @@ fun BookingScreen(
             day
         )
         datePickerDialog.show()
+    }
+
+    // 逆ジオコーディングを使って緯度・経度を住所に変換する関数
+    fun getAddressFromLatLng(latLng: LatLng): String {
+        val geocoder = Geocoder(context, Locale.JAPAN) // 日本語表記を指定
+        try {
+            // 住所リストを取得
+            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+            if (addresses != null && addresses.isNotEmpty()) {
+                val address = addresses[0]
+                return address.getAddressLine(0) // 住所の最初の行を返す
+            }
+        } catch (e: Exception) {
+            Log.e("Geocoder", "Failed to get address", e)
+        }
+        return "住所が見つかりません"
     }
 
     // MaterialDatePickerを使うための準備
@@ -138,6 +172,32 @@ fun BookingScreen(
         ) {
             item {
                 // 場所の入力フォーム
+//                TextField(
+//                    value = location,
+//                    onValueChange = { location = it },
+//                    label = { Text("場所") },
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(16.dp)
+//                )
+                // Mapのアイコンを追加
+                IconButton(
+                    onClick = { showMapDialog = true },
+//                    modifier = Modifier.padding(start = 8.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_add_location_alt_24), // 時計のアイコンを指定
+                        contentDescription = "Clock",
+                        tint = Color.Black
+                    )
+                }// 「場所を選択する」テキスト
+                Text(
+                    text = "   場所を選択する",
+                    modifier = Modifier,
+//                        .padding(start = 4.dp),  // テキストとアイコンの間に少しスペースを追加
+                    color = Color.Black
+                )
+                // 場所の入力フォーム
                 TextField(
                     value = location,
                     onValueChange = { location = it },
@@ -145,7 +205,27 @@ fun BookingScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
+                        .clickable {
+                            // 地図を表示して場所を選択
+//                            selectedLocation = null // 選択位置をクリア
+                            // 地図を表示して場所を選択
+                            showMapDialog = true
+                        }
                 )
+
+                // ユーザーがクリックした位置をマップ上で表示するコンポーネント
+                if (selectedLocation == null) {
+                    LocationPickerMap { latLng ->
+                        selectedLocation = latLng
+                        location = getAddressFromLatLng(latLng) // 逆ジオコーディングを行い住所を反映
+                    }
+                } else {
+                    // 地図上で場所が選択された場合、その位置を示すマーカーを表示
+                    LocationPickerMap { latLng ->
+                        selectedLocation = latLng
+                        location = getAddressFromLatLng(latLng) // 逆ジオコーディングを行い住所を反映
+                    }
+                }
             }
 
             item {
@@ -283,6 +363,59 @@ fun BookingScreen(
             )
         }
     }
+
+    // 地図ダイアログを表示
+    if (showMapDialog) {
+        LocationPickerDialog(
+            onLocationSelected = { latLng ->
+                selectedLocation = latLng
+                location = getAddressFromLatLng(latLng) // 逆ジオコーディングを行い住所を反映
+                showMapDialog = false
+            },
+            onDismiss = { showMapDialog = false }
+        )
+    }
+}
+
+@Composable
+fun LocationPickerDialog(
+    onLocationSelected: (LatLng) -> Unit,
+    onDismiss: () -> Unit
+) {
+    // ダイアログの表示
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("場所を選択") },
+        text = {
+            // スクロール可能なコンテンツにするために、Columnを使ってラップ
+            Column(modifier = Modifier.heightIn(max = 600.dp)) {
+                LocationPickerMap(onLocationSelected = onLocationSelected)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("閉じる")
+            }
+        }
+    )
+}
+
+@Composable
+fun LocationPickerMap(onLocationSelected: (LatLng) -> Unit) {
+    // カメラ位置の状態
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(LatLng(35.681236, 139.767125), 10f) // 東京駅の初期位置
+    }
+
+    // GoogleMap表示
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        cameraPositionState = cameraPositionState,
+        onMapClick = { latLng ->
+            // ユーザーがマップをクリックした位置を取得
+            onLocationSelected(latLng)
+        }
+    )
 }
 
 //@ExperimentalMaterialApi
