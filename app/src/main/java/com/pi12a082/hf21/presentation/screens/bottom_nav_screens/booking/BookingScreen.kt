@@ -76,6 +76,12 @@ fun BookingScreen(
     // 地図を表示するためのダイアログ表示の状態
     var showMapDialog by remember { mutableStateOf(false) }
 
+    // 予約情報の確認ダイアログ表示フラグ
+    var showConfirmDialog by remember { mutableStateOf(false) }
+
+    // 確認ダイアログで表示する予約情報
+    val bookingInfo = "場所: $location\n日時: $selectedDate\nプラン: $selectedPlan"
+
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
@@ -180,23 +186,30 @@ fun BookingScreen(
 //                        .fillMaxWidth()
 //                        .padding(16.dp)
 //                )
-                // Mapのアイコンを追加
-                IconButton(
-                    onClick = { showMapDialog = true },
-//                    modifier = Modifier.padding(start = 8.dp)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, // アイコンとテキストを垂直方向に中央揃え
+//                    horizontalArrangement = Arrangement.Start, // アイコンとテキストを左揃え
+                    modifier = Modifier
+                        .padding(5.dp) // 必要に応じてパディングを追加
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_add_location_alt_24), // 時計のアイコンを指定
-                        contentDescription = "Clock",
-                        tint = Color.Black
-                    )
-                }// 「場所を選択する」テキスト
-                Text(
-                    text = "   場所を選択する",
-                    modifier = Modifier,
+                    // Mapのアイコンを追加
+                    IconButton(
+                        onClick = { showMapDialog = true },
+//                    modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.baseline_add_location_alt_24), // 時計のアイコンを指定
+                            contentDescription = "Clock",
+                            tint = Color.Black
+                        )
+                    }// 「場所を選択する」テキスト
+                    Text(
+                        text = "   場所を選択する",
+                        modifier = Modifier,
 //                        .padding(start = 4.dp),  // テキストとアイコンの間に少しスペースを追加
-                    color = Color.Black
-                )
+                        color = Color.Black
+                    )
+                }
                 // 場所の入力フォーム
                 TextField(
                     value = location,
@@ -212,7 +225,6 @@ fun BookingScreen(
                             showMapDialog = true
                         }
                 )
-
                 // ユーザーがクリックした位置をマップ上で表示するコンポーネント
                 if (selectedLocation == null) {
                     LocationPickerMap { latLng ->
@@ -229,6 +241,12 @@ fun BookingScreen(
             }
 
             item {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically, // アイコンとテキストを垂直方向に中央揃え
+//                    horizontalArrangement = Arrangement.Start, // アイコンとテキストを左揃え
+                    modifier = Modifier
+                        .padding(5.dp) // 必要に応じてパディングを追加
+                ) {
                 // 時計のアイコンを追加
                 IconButton(
                     onClick = { showDatePicker() },
@@ -246,6 +264,7 @@ fun BookingScreen(
 //                        .padding(start = 4.dp),  // テキストとアイコンの間に少しスペースを追加
                     color = Color.Black
                 )
+                }
                 // 日時の入力フォーム
                 TextField(
                     value = selectedDate,
@@ -345,7 +364,8 @@ fun BookingScreen(
         // 予約するボタンを画面下部に1つ表示
         Button(
             onClick = {
-                // 予約画面に遷移
+                // ユーザーが選択した情報を確認ダイアログで表示
+                showConfirmDialog = true
             },
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color(0xFFF2F3F2), // 背景色を設定
@@ -373,6 +393,34 @@ fun BookingScreen(
                 showMapDialog = false
             },
             onDismiss = { showMapDialog = false }
+        )
+    }
+
+    // 予約確認ダイアログを表示
+    if (showConfirmDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmDialog = false },
+            title = { Text("予約内容確認") },
+            text = {
+                Column {
+                    Text(text = bookingInfo)
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    // 一時保存する処理を追加
+                    // ここではViewModelを使って予約情報を保存する処理を行う
+                    bookingViewModel.saveBookingInfo(location, selectedDate, selectedPlan)
+                    showConfirmDialog = false
+                }) {
+                    Text("確認")
+                }
+            },
+            dismissButton = {
+                Button(onClick = { showConfirmDialog = false }) {
+                    Text("キャンセル")
+                }
+            }
         )
     }
 }

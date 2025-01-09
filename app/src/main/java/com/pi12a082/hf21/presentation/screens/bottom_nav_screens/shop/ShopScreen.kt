@@ -174,7 +174,7 @@ fun ShopScreen(
                 modifier = Modifier
                     .fillMaxWidth() // ボタンが画面いっぱいに広がる
                     .padding(horizontal = 16.dp) // 左右のパディング
-                    .padding(top = 500.dp) // ボタンと画面下部の余白
+                    .padding(top = 550.dp) // ボタンと画面下部の余白
             ) {
                 Text(
                     text = "予約する",

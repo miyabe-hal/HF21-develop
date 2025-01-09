@@ -19,6 +19,15 @@ class BookingViewModel : ViewModel() {
         )
     }
 
+    // 予約情報の保存
+    fun saveBookingInfo(location: String, date: String, plan: String) {
+        _state.value = _state.value.copy(
+            selectedLocation = location,
+            selectedDate = date,
+            selectedPlan = plan
+        )
+    }
+
     // 予約を確定する
     fun confirmBooking() {
         // ここでは予約の処理を行います（例えば、API呼び出しなど）
@@ -34,6 +43,9 @@ class BookingViewModel : ViewModel() {
                 // 処理が成功した場合、選択された商品をクリア
                 _state.value = _state.value.copy(
                     isLoading = false,
+                    selectedLocation = "", // 予約後に場所情報をリセット
+                    selectedDate = "", // 予約後に日時情報をリセット
+                    selectedPlan = "", // 予約後にプラン情報をリセット
                     selectedProducts = emptyList(),
                     error = ""
                 )
